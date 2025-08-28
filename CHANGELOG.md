@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for auto-aliasing module classes in tinker sessions
 
+### Fixed
+
+- Ensure module event discovery runs during event cache builds (`event:cache`/`optimize`) even if events are already cached at process start, preventing missing module listeners on repeated cache builds. Runtime performance remains unchanged.
+
 ## [2.2.0] - 2024-04-05
 
 ### Added
