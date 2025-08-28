@@ -31,16 +31,46 @@ class ModularEventServiceProvider extends ServiceProvider
 		});
 	}
 	
-	public function getEvents(): array
-	{
-		// If events are cached, or Modular event discovery is disabled, then we'll
-		// just let the normal event service provider handle all the event loading.
-		if ($this->app->eventsAreCached() || ! $this->shouldDiscoverEvents()) {
-			return [];
-		}
-		
-		return $this->discoverEvents();
-	}
+       public function getEvents(): array
+       {
+               // If events are cached we'll skip discovery unless we're currently building
+               // the events cache. The cache-building commands need to re-run discovery so
+               // that repeated cache builds produce identical manifests.
+               $discover_during_cache = config('app-modules.discover_events_during_cache_builds', true);
+
+               if (
+                       $this->app->eventsAreCached()
+                       && (! $discover_during_cache || ! $this->isCacheBuildProcess())
+               ) {
+                       return [];
+               }
+
+               // If event discovery has been disabled, let the normal service provider handle
+               // the event loading.
+               if (! $this->shouldDiscoverEvents()) {
+                       return [];
+               }
+
+               return $this->discoverEvents();
+       }
+
+       /**
+        * Determine if the current process is actively building Laravel's caches.
+        *
+        * We conservatively check the CLI arguments for "event:cache" or
+        * "optimize" to avoid relying on environment variables or other state.
+        */
+        protected function isCacheBuildProcess(): bool
+        {
+               if (PHP_SAPI !== 'cli') {
+                       return false;
+               }
+
+               $argv = $_SERVER['argv'] ?? [];
+
+               return in_array('event:cache', $argv, true)
+                       || in_array('optimize', $argv, true);
+        }
 	
 	public function shouldDiscoverEvents(): bool
 	{

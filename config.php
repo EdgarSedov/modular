@@ -90,5 +90,19 @@ return [
 	| the presence of event discovery.
 	*/
 	
-	'should_discover_events' => null,
+       'should_discover_events' => null,
+
+       /*
+       |--------------------------------------------------------------------------
+       | Discover events during cache builds
+       |--------------------------------------------------------------------------
+       |
+       | When building Laravel's event cache (via `event:cache` or `optimize`),
+       | Modular will normally re-run event discovery even if an events cache
+       | already exists to ensure deterministic cache files. You can disable this
+       | behavior here to restore the legacy behaviour.
+       |
+       */
+
+       'discover_events_during_cache_builds' => true,
 ];

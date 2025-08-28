@@ -144,6 +144,8 @@ should work as expected in most cases:
 - Blade components will be auto-discovered
 - Event listeners will be auto-discovered
 
+Modular ensures module listeners are included when building Laravel's event cache (`event:cache`/`optimize`), even if an events cache exists when the process starts. Rebuilding the cache repeatedly will produce identical manifests. You can disable this behaviour via the `discover_events_during_cache_builds` config option.
+
 ### Commands
 
 #### Package Commands
